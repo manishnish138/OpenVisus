@@ -12,14 +12,8 @@ jobs:
       fail-fast: false  
       matrix:
         python-version: [ '3.6', '3.7', '3.8', '3.9'] 
-        os: ["windows-latest", "macos-latest", "ubuntu-latest"]
+        os: ["ubuntu-latest"]
         arch: [x86_64, aarch64]
-        exclude:
-          - os: macos-latest
-            arch: aarch64
-          - os: windows-latest
-            arch: aarch64
-     
     steps:
     
     # ____________________________________________ CLONE OPENVISUS
@@ -175,3 +169,34 @@ jobs:
              docker push visus/mod_visus:$TAG
              popd
            fi
+  build_aarch64:
+    name: "Wheel ${{ matrix.pyver }} aarch64"
+    strategy:
+      matrix:
+        pyver: [cp36-cp36m, cp37-cp37m, cp38-cp38, cp39-cp39]
+        arch: [aarch64]
+      fail-fast: false
+    runs-on: ubuntu-latest
+    env:
+      py: /opt/python/${{ matrix.pyver }}/bin/python
+      img: quay.io/pypa/manylinux2014_${{ matrix.arch }}
+    steps:
+    - name: git clone OpenVisus
+      uses: actions/checkout@v2
+    - name: Set up QEMU
+      id: qemu
+      uses: docker/setup-qemu-action@v1 
+    - name: Distrib OpenVisus
+      run: |
+        docker run --rm -v ${{ github.workspace }}:/ws:rw --workdir=/ws \
+          ${{ env.img }} \
+          bash -exc '${{ env.py }} -m pip install virtualenv && ${{ env.py }} -m venv .env && \
+          source .env/bin/activate && \
+          python -m pip install setuptools wheel twine --upgrade 1>/dev/null || true && \
+          pushd build/Release/OpenVisus && \
+          Version=${{ matrix.pyver }} && \
+          python setup.py -q bdist_wheel --python-tag=cp${Version:0:1}${Version:2:1} --plat-name=manylinux2014_aarch64 && \
+          python -m twine upload --username ${{ secrets.PYPI_USERNAME }} --password ${{ secrets.PYPI_PASSWORD }} --skip-existing  "dist/*.whl" && \
+          popd && \
+          deactivate'
+          
