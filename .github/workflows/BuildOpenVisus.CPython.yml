@@ -186,22 +186,28 @@ jobs:
     - name: Set up QEMU
       id: qemu
       uses: docker/setup-qemu-action@v1
-    - name: Compiling
+    #- name: Compiling
+    #  run: |
+    #    docker run --rm -v ${{ github.workspace }}:/ws:rw --workdir=/ws \
+    #      ${{ env.img }} \
+    #      bash -exc '${{ env.py }} -m pip install virtualenv && ${{ env.py }} -m venv .env && \
+    #      source .env/bin/activate && \
+    #      export Qt5_DIR=/opt/qt512 &&\
+    #      ./scripts/build_linux.sh && \
+    #      deactivate'
+    - name: compile
       run: |
-        docker run --rm -v ${{ github.workspace }}:/ws:rw --workdir=/ws \
-          ${{ env.img }} \
-          bash -exc '${{ env.py }} -m pip install virtualenv && ${{ env.py }} -m venv .env && \
-          source .env/bin/activate && \
-          export Qt5_DIR=/opt/qt512 &&\
-          ./scripts/build_linux.sh && \
-          deactivate'
+        docker run -e PYTHON_VERSION=${{ matrix.python-version }} -e Qt5_DIR=/opt/qt512 -v ${PWD}:${PWD}  -w ${PWD} visus/portable-linux-binaries /bin/bash -c "./scripts/build_linux.sh"
+        sudo chown -R root:root  build
+        sudo chmod -R a+rwx      build
+        ls -l build
+        file build
     - name: Distrib OpenVisus
       run: |
         docker run --rm -v ${{ github.workspace }}:/ws:rw --workdir=/ws \
           ${{ env.img }} \
           bash -exc '${{ env.py }} -m pip install virtualenv && ${{ env.py }} -m venv .env && \
           source .env/bin/activate && \
-          ./scripts/build_linux.sh && \
           python -m pip install setuptools wheel twine --upgrade 1>/dev/null || true && \
           pushd build/Release/OpenVisus && \
           Version=${{ matrix.pyver }} && \
