@@ -192,6 +192,7 @@ jobs:
           ${{ env.img }} \
           bash -exc '${{ env.py }} -m pip install virtualenv && ${{ env.py }} -m venv .env && \
           source .env/bin/activate && \
+          export Qt5_DIR=/opt/qt512 &&\
           ./scripts/build_linux.sh && \
           deactivate'
     - name: Distrib OpenVisus
