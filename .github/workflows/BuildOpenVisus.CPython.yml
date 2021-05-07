@@ -185,13 +185,22 @@ jobs:
       uses: actions/checkout@v2
     - name: Set up QEMU
       id: qemu
-      uses: docker/setup-qemu-action@v1 
+      uses: docker/setup-qemu-action@v1
+    - name: Compiling
+      run: |
+        docker run --rm -v ${{ github.workspace }}:/ws:rw --workdir=/ws \
+          ${{ env.img }} \
+          bash -exc '${{ env.py }} -m pip install virtualenv && ${{ env.py }} -m venv .env && \
+          source .env/bin/activate && \
+          ./scripts/build_linux.sh && \
+          deactivate'
     - name: Distrib OpenVisus
       run: |
         docker run --rm -v ${{ github.workspace }}:/ws:rw --workdir=/ws \
           ${{ env.img }} \
           bash -exc '${{ env.py }} -m pip install virtualenv && ${{ env.py }} -m venv .env && \
           source .env/bin/activate && \
+          ./scripts/build_linux.sh && \
           python -m pip install setuptools wheel twine --upgrade 1>/dev/null || true && \
           pushd build/Release/OpenVisus && \
           Version=${{ matrix.pyver }} && \
