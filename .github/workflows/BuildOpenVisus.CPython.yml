@@ -140,9 +140,9 @@ jobs:
     - name: Distrib OpenVisus
       shell: bash -l {0}
       run: |
-           GIT_TAG=$(git describe --tags --exact-match 2>/dev/null || true)
-           if [[ "${GIT_TAG}" != "" ]] ; then
-             echo "GIT_TAG $GIT_TAG"
+           #GIT_TAG=$(git describe --tags --exact-match 2>/dev/null || true)
+           #if [[ "${GIT_TAG}" != "" ]] ; then
+           #  echo "GIT_TAG $GIT_TAG"
              
              # install some needed packages
              ${pythonLocation}/python -m pip install setuptools wheel twine --upgrade 1>/dev/null || true
