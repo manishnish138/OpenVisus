@@ -13,6 +13,12 @@ jobs:
       matrix:
         python-version: [ '3.6', '3.7', '3.8', '3.9'] 
         os: ["windows-latest", "macos-latest", "ubuntu-latest"]
+        arch: [x86_64, aarch64]
+        exclude:
+          - os: macos-latest
+            arch: aarch64
+          - os: windows-latest
+            arch: aarch64
      
     steps:
     
@@ -153,6 +159,7 @@ jobs:
              if [[  "${{ matrix.os }}" == "windows-latest" ]] ; then PLATFORM_NAME=win_amd64            ; fi
              if [[  "${{ matrix.os }}" == "macos-latest"   ]] ; then PLATFORM_NAME=macosx_10_9_x86_64   ; fi
              if [[  "${{ matrix.os }}" == "ubuntu-latest"  ]] ; then PLATFORM_NAME=manylinux2010_x86_64 ; fi
+             if [[  "${{ matrix.arch }}" == "aarch64"  ]] ; then PLATFORM_NAME=manylinux2014_aarch64 ; fi
              ${pythonLocation}/python setup.py -q bdist_wheel --python-tag=cp${Version:0:1}${Version:2:1} --plat-name=${PLATFORM_NAME}
              
              # upload the weel
