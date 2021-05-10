@@ -202,6 +202,8 @@ jobs:
         sudo chmod -R a+rwx      build
         ls -l build
         file build
+        cd build
+        ls -l
     - name: Distrib OpenVisus
       run: |
         docker run --rm -v ${{ github.workspace }}:/ws:rw --workdir=/ws \
