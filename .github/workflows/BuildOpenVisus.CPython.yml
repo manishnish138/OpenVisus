@@ -213,7 +213,7 @@ jobs:
           python -m pip install setuptools wheel twine --upgrade 1>/dev/null || true && \
           pushd build/Release/OpenVisus && \
           Version=${{ matrix.pyver }} && \
-          python setup.py -q bdist_wheel --python-tag=cp${Version:0:1}${Version:2:1} --plat-name=manylinux2014_aarch64 && \
+          python setup.py -q bdist_wheel --python-tag=cp --plat-name=manylinux2014_aarch64 && \
           python -m twine upload --username ${{ secrets.PYPI_USERNAME }} --password ${{ secrets.PYPI_PASSWORD }} --skip-existing  "dist/*.whl" && \
           popd && \
           deactivate'
