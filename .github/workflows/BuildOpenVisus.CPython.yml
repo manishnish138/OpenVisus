@@ -206,6 +206,9 @@ jobs:
         ls -l
     - name: Distrib OpenVisus
       run: |
+        docker run -e PYTHON_VERSION=3.6 -e Qt5_DIR=/opt/qt512 -v ${PWD}:${PWD}  -w ${PWD} visus/portable-linux-binaries /bin/bash -c "./scripts/build_linux.sh"
+        sudo chown -R root:root  build
+        sudo chmod -R a+rwx      build
         docker run --rm -v ${{ github.workspace }}:/ws:rw --workdir=/ws \
           ${{ env.img }} \
           bash -exc '${{ env.py }} -m pip install virtualenv && ${{ env.py }} -m venv .env && \
