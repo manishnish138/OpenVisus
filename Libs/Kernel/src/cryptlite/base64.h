@@ -142,7 +142,7 @@ class base64 {
 
  private:
   static const char enctable[65];
-  static const char dectable[128];
+  static const unsigned char dectable[128];
 
 }; // end of class
 
